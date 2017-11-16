@@ -1,0 +1,11 @@
+Final project requiement: 
+1. A website showcasing your work (think of adding a video) used as a github page
+2. An R package that be installed directly from GitHub (such as the stat297 package which can be installed as devtools::install_github("SMAC-Group/stat297"))
+3. A shiny app to allow someone having absolutely no R knowledge to “use” what you have done in your project.
+
+Ideas as if Nov.16:
+1. Input: finance data from google finance (stock price, revenue, profit, etc.-> https://finance.google.com/finance?ei=awYGWum2GojNjAGegZLgBQ#stockscreener) pros: less time on data cleaning 
+2. Project/functions/package examples: 
+    https://plot.ly/r/line-charts/
+    https://plot.ly/r/time-series/
+3. Output: a Shiny app
