@@ -1,0 +1,46 @@
+#Sample of the code that we will use to compile and construct the data frames that the user will put to use.
+#this is incomplete but shows fundamentally what we will use
+#i wrote this on 11/29
+
+library("dplyr")
+library("rvest")
+
+
+########################
+
+(yes <- html("https://www.marketwatch.com/investing/stock/wmt/financials/balance-sheet") %>%
+  html_nodes(xpath='//tr//*[(((count(preceding-sibling::*) + 1) = 6) and parent::*)]') %>%
+  html_text()
+)
+(yesAPPLE <- html("https://www.marketwatch.com/investing/stock/aapl/financials/balance-sheet") %>%
+  html_nodes(xpath='//tr//*[(((count(preceding-sibling::*) + 1) = 6) and parent::*)]') %>%
+  html_text()
+)
+#when we went from walmart to apple, the XPath for the corresponding (year) column is the same 
+
+
+#################
+
+(yesyes <- html("https://www.marketwatch.com/investing/stock/wmt/financials/balance-sheet") %>%
+    html_nodes(xpath='//*[contains(concat( " ", @class, " " ), concat( " ", "valueCell", " " )) and (((count(preceding-sibling::*) + 1) = 5) and parent::*)] | //th[(((count(preceding-sibling::*) + 1) = 5) and parent::*)]') %>%
+    html_text()
+)
+#here, we see theres no sort of pattern in the XPATHs between rows (this row and the row above are adjacent)
+
+###############
+#will this all work? can we construct a data frame ?
+
+values <- html('https://www.marketwatch.com/investing/stock/wmt/financials/balance-sheet') %>%
+  html_nodes(xpath='//*[contains(concat( " ", @class, " " ), concat( " ", "rowTitle", " " ))]') %>%
+  html_text()
+  
+
+mylist<-c(yes[-1],yesyes[-1])
+fiscal.years<-c(yes[1],yesyes[1])
+
+
+data<-matrix(mylist, ncol = 2)
+data<-data.frame(data)
+row.names(data)<-make.names(values[-1], unique = TRUE) #this fixes a pesky error
+colnames(data)<-fiscal.years
+
