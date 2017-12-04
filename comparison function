@@ -1,0 +1,49 @@
+#how to code in shiny:
+#https://github.com/rstudio/shiny-examples/blob/master/063-superzip-example/ui.R
+#https://shiny.rstudio.com/gallery/superzip-example.html
+
+##comparisons##########
+
+#first we get data and get it ready for graphing
+#require: that function i wrote
+#require dplyr
+library("dplyr")
+library("plotly")
+
+#hard code this for now:
+apple<-create.data("aapl")[[2]]
+variables<-create.data("aapl")[[3]][-1]
+walmart<-create.data("wmt")[[2]]
+
+#x is the variable's row in the matrix, this is subject to change
+graph <- function(x){  
+  
+  
+  y<-variables[x]
+  z1<-as.character(apple[y,])
+  z<-as.character(walmart[y,])
+  #see if all the numbers in each of the two rows are all scaled by the same values
+  #this would be if it was B or M (to denote million or billion)
+  if(substr(z,nchar(z),nchar(z)))==substr(z1,nchar(z1),nchar(z1))){
+    key<-substr(substr(z,nchar(z),nchar(z)),1,1)[1]
+    if(key=="%"){
+      legend<- sprintf("All values of '%s' are percentages < 100", y)
+      temp1 <- gsub("([MB)])","",apple[y,])
+      temp1 <- as.numeric(gsub("([(])","-",temp1))
+      temp2 <- gsub("([MB)])","",walmart[y,])
+      temp2 <- as.numeric(gsub("([(])","-",temp1))
+    }else{
+      legend<- sprintf("All values of '%s' are in %sillions of US dollars", y, key)
+      temp1 <- gsub("([MB)])","",apple[y,])
+      temp1 <- as.numeric(gsub("([(])","-",temp1))
+      temp2 <- gsub("([MB)])","",walmart[y,])
+      temp2 <- as.numeric(gsub("([(])","-",temp1))
+    }
+  }
+  data<-data.frame(matrix(temp1,temp2, ncol = 2, nrow=5))
+  colnames(data)<-c(CREATE VECTOR)
+  #plot!
+  plot_ly(data, x=c(1:5)) %>%
+    add_trace(y=~temp1, x=~c(1:5), mode='lines')
+}
+#it works!
