@@ -2,44 +2,89 @@
 #https://github.com/rstudio/shiny-examples/blob/master/063-superzip-example/ui.R
 #https://shiny.rstudio.com/gallery/superzip-example.html
 
+
 ##comparisons##########
 
 #first we get data and get it ready for graphing
-#require: that function i wrote
-#require dplyr
-library("dplyr")
-library("plotly")
 
 #hard code this for now:
 apple<-create.data("aapl")[[2]]
 variables<-create.data("aapl")[[3]][-1]
 walmart<-create.data("wmt")[[2]]
 
-#x is the variable's row in the matrix, this is subject to change
-graph <- function(x){  
-  
+#require create.data() function
+#require dplyr
+#require plotly
+library("dplyr")
+library("plotly")
+library("stringi")
+#x is the variable's row in the matrix, this is subject to change. 
+#this will havet to interact with the ui and an input as well. 
+#this is a decision to be made by the ui author
+#this function is not at all coded to fit in the server and must be fixed accordingly
+ 
+comparisonPlot <- function(x,AA,BB){  
+  #AA and BB will be of form input$VAR, which will be a read in textInput() from ui
+  #AA and BB must be character strings. the input syntax must acheive this
+  AA <- create.data(AA)
+  A<-AA[[2]]
+  BB <- create.data(BB)
+  B<-BB[[2]]
   
   y<-variables[x]
-  z1<-as.character(apple[y,])
-  z<-as.character(walmart[y,])
+  
+  z<-as.character(A[y,])
+  z1<-as.character(B[y,])
   #see if all the numbers in each of the two rows are all scaled by the same values
   #this would be if it was B or M (to denote million or billion)
-  if(substr(z,nchar(z),nchar(z)))==substr(z1,nchar(z1),nchar(z1))){
-    key<-substr(substr(z,nchar(z),nchar(z)),1,1)[1]
+  options(digits=5)
+  yes<-as.character(c(substr(z,nchar(z),nchar(z))))
+  yesyes<-as.character(c(substr(z1,nchar(z1),nchar(z1))))
+  
+  #here we are going to create the data that we will graph such that we will: 
+  #not only will we cut down the data sets to the part the user specified
+  #we will get rid of the letters (M,B,%) at the end of each number
+  #and we will put the numbers in the same dimension as needed (all into millions or billions, etc) 
+  if(length(unique(yes))==1 & length(unique(yesyes))==1){
+    key<-substr(substr(z,nchar(z),nchar(z)),1,1)[1] #hard coded for one column but this is fine
     if(key=="%"){
       legend<- sprintf("All values of '%s' are percentages < 100", y)
-      temp1 <- gsub("([MB)])","",apple[y,])
+      temp1 <- gsub("([MB)])","",A[y,])
       temp1 <- as.numeric(gsub("([(])","-",temp1))
-      temp2 <- gsub("([MB)])","",walmart[y,])
-      temp2 <- as.numeric(gsub("([(])","-",temp1))
+      temp2 <- gsub("([MB)])","",B[y,])
+      temp2 <- as.numeric(gsub("([(])","-",temp2))
     }else{
       legend<- sprintf("All values of '%s' are in %sillions of US dollars", y, key)
-      temp1 <- gsub("([MB)])","",apple[y,])
+      temp1 <- gsub("([MB)])","",A[y,])
       temp1 <- as.numeric(gsub("([(])","-",temp1))
-      temp2 <- gsub("([MB)])","",walmart[y,])
-      temp2 <- as.numeric(gsub("([(])","-",temp1))
+      temp2 <- gsub("([MB)])","",B[y,])
+      temp2 <- as.numeric(gsub("([(])","-",temp2))
+    }
+  }else{
+    legend<- sprintf("All values of '%s' are in Millions of US dollars", y)
+    i=1
+    for(i in c(1:nchar(z))){
+      if(substr(z,nchar(z),nchar(z))[[i]]=="B"){
+        z[i]<- gsub("([B])","",z[i])
+        z[i]<-as.numeric(z[i])*1000
+      }else if(substr(z,nchar(z),nchar(z))[[i]]=="K"){
+        z[i]<- gsub("([K])","",z[i])
+        z[i]<-as.numeric(z[i])/1000
+      }
+      if(substr(z1,nchar(z1),nchar(z1))[[i]]=="B"){
+        z1[i]<- gsub("([B])","",z1[i])
+        z1[i]<-as.numeric(z1[i])*1000
+      }else if(substr(z1,nchar(z1),nchar(z1))[[i]]=="K"){
+        z1[i]<- gsub("([K])","",z1[i])
+        z1[i]<-as.numeric(z1[i])/1000
+      }
+    CREATE TEMP CONVERSION
     }
   }
+  
+  #now the function will graph the variable that the user prompted for 
+  #THIS IS INCOMPLETE (EVERYTHING BELOW) BUT IVE SHOWN THAT IT WILL WORK
+  
   data<-data.frame(matrix(temp1,temp2, ncol = 2, nrow=5))
   colnames(data)<-c(CREATE VECTOR)
   #plot!
@@ -47,3 +92,4 @@ graph <- function(x){
     add_trace(y=~temp1, x=~c(1:5), mode='lines')
 }
 #it works!
+
