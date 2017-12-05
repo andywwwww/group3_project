@@ -22,16 +22,17 @@ library("stringi")
 #this will havet to interact with the ui and an input as well. 
 #this is a decision to be made by the ui author
 #this function is not at all coded to fit in the server and must be fixed accordingly
- 
-comparisonPlot <- function(x,AA,BB){  
-  #AA and BB will be of form input$VAR, which will be a read in textInput() from ui
-  #AA and BB must be character strings. the input syntax must acheive this
-  AA <- create.data(AA)
+
+
+comparisonPlot <- function(x,AAA,BBB){  
+  #AAA and BBB will be of form input$VAR, which will be a read in textInput() from ui
+  #AAA and BBB must be character strings. the input syntax must acheive this
+  AA <- create.data(AAA)
   A<-AA[[2]]
-  BB <- create.data(BB)
+  BB <- create.data(BBB)
   B<-BB[[2]]
   
-  y<-variables[x]
+  y<-BB[[3]][x+1]
   
   z<-as.character(A[y,])
   z1<-as.character(B[y,])
@@ -70,6 +71,8 @@ comparisonPlot <- function(x,AA,BB){
       }else if(substr(z,nchar(z),nchar(z))[[i]]=="K"){
         z[i]<- gsub("([K])","",z[i])
         z[i]<-as.numeric(z[i])/1000
+      }else{
+
       }
       if(substr(z1,nchar(z1),nchar(z1))[[i]]=="B"){
         z1[i]<- gsub("([B])","",z1[i])
@@ -78,18 +81,24 @@ comparisonPlot <- function(x,AA,BB){
         z1[i]<- gsub("([K])","",z1[i])
         z1[i]<-as.numeric(z1[i])/1000
       }
-    CREATE TEMP CONVERSION
     }
+    temp1<-z
+    temp2<-z1
   }
   
-  #now the function will graph the variable that the user prompted for 
-  #THIS IS INCOMPLETE (EVERYTHING BELOW) BUT IVE SHOWN THAT IT WILL WORK
+  #now the function will graph the variable that the user prompted for
   
   data<-data.frame(matrix(temp1,temp2, ncol = 2, nrow=5))
-  colnames(data)<-c(CREATE VECTOR)
+  colnames(data)<-c(AAA,BBB)
+  
+  years<-colnames(AA[[2]])
+  rownames(data)<-years
   #plot!
-  plot_ly(data, x=c(1:5)) %>%
-    add_trace(y=~temp1, x=~c(1:5), mode='lines')
+  plot_ly(data, x=~c(2013:2017),y=~y) %>%
+    add_trace(y=~temp1, x=~years, name=AAA, type='scatter', mode='lines') %>%
+    add_trace(y=~temp2, x=~years, name=BBB,  type='scatter', mode='lines') %>%
+    layout(title = legend,
+           scene = list(
+              yaxis = list(title = y)))
 }
-#it works!
 
