@@ -32,7 +32,7 @@ install.packages(rvest)
 
 ### Installing
 
-Install the R package from git first. Available in both zip file and git file with name "package-."
+Install the R package from git first, this will require an installation of the package "devtools". Available in both zip file and git file with name "package-."
 For zip, unzip it locally and run command
 
 ```
@@ -48,35 +48,58 @@ For git files, copy all files with name "package-" into one directory and repeat
 ![If the package works, it should look like this.](http://personal.psu.edu/jxw505/OTHERS/test.PNG)
 (The link sometimes is iffy. Image is available at http://personal.psu.edu/jxw505/OTHERS/test.PNG)
 
-## Running the tests
-After having the package running, type the following in console
+## Running in the console:
+
+example 1:
+After having the package running, type the following in console,
 ```
 comparisonPlot(2,'wmt','aapl')
 ```
-with code
+This will output a plot with the walmart and apple's "Cash Only" (asset) dollar values over the past 5 years.
+
+
+example 2:
+Internally, this function above (before cleaning the data sets down to the prompted variable and graphing) will effectively do the following,
 ```
 apple<-create.data("aapl")[[2]]
-variables<-create.data("aapl")[[3]][-1]
-walmart<-create.data("wmt")[[2]]
+variables<-create.data("aapl")[[3]][+1] 
+walmart<-create.data("wmt")[[2]] 
+
+#or, to refer to the syntax used, 
+#AA<-create.data("AAA")[[2]]
+#BB<-create.data("BBB")[[2]]
+#variables<-create.data("AAA")[[3]][+1]
 ```
 
-### Break down into end to end tests
+example 3:
+This comparisonPlot() function uses another function in our package, the create.data() function.
+This function takes one argument, the stock ticker, which must be a character string. It returns a list of 3 objects. Giving,
+```
+#all of these will return TRUE
+class(create.data('wmt')[[1]])=="data.frame"
+class(create.data('wmt')[[2]])=="matrix"
+#we use the matrix to create the plots in our comparison function because it retains the row names given to it, and graphing these
+#row names doesnt introduce any problems
+```
+
+
+
+## Running in Shiny:
+Internally, heres how our functions work in shiny.
+
 
 In the main comparison function,
-
 ```
 comparisonPlot <- function(x,AAA,BBB)
 ```
   #AAA and BBB will be of form input$VAR, which will be a read in textInput() from ui
   #AAA and BBB must be character strings. the input syntax must acheive this
+  #Furthermore, the AAA and BBB variables will be stock tickers, and this function will only work if these stock tickers (and their
+  #corresponding companies' balance sheets) are on the website from which we import this data, Marketwatch.com 
+  #
 
-### And coding style tests
 
-Explain what these tests test and why
 
-```
-Give an example
-```
 
 ## Deployment
 
