@@ -49,9 +49,8 @@ install and build.
 
 For git files, copy all files with name "package-" into one directory and repeat the same command with zip.
 
-![Caption for the picture.](/path/to/image.png)
+![If the package works, it should look like this.](https://drive.google.com/file/d/1ExH0MrRN4vHvTYLdINleK6IaTWxOr-Hk/view?usp=sharing)
 
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Running the tests
 
