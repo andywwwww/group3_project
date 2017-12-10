@@ -1,21 +1,15 @@
-# 
-+
-#A R package 
-+Pull data off from the website Marketwatch  using selectorGadget and the rvest package.
-+clean up the data just so R could read it to the comparison function using package “dplyr” and "rvest"
-+
-+
-+##A Shiny App
-+##Financial statement data and comparison
-+
-
 # stat297projectgroup3
 
 The users would be able to compare data from two different companies using comparisons from line graphs and from side by side tables. This visualization would help users to make decisions such as what the overall trends of different aspects of the company’s finances are. +This can help them to make decisions such as choosing which company you’d want to buy stocks from.
 
 ## Getting Started
 
-  ""  "" 
+Our Project consists of a R package, a Shiny App that works with financial statment and compare two companies statement.
+
+## Data
+
+Pull data off from the website Marketwatch  using selectorGadget and the rvest package.
+clean up the data just so R could read it to the comparison function using package “dplyr” and "rvest"
 
 ### Prerequisites
 
@@ -49,20 +43,29 @@ install and build.
 
 For git files, copy all files with name "package-" into one directory and repeat the same command with zip.
 
-![If the package works, it should look like this.](https://drive.google.com/file/d/1ExH0MrRN4vHvTYLdINleK6IaTWxOr-Hk/view?usp=sharing)
-
+![If the package works, it should look like this.](http://personal.psu.edu/jxw505/OTHERS/)
 
 ## Running the tests
-
-Explain how to run the automated tests for this system
+After having the package running, type the following in console
+```
+comparisonPlot(2,'wmt','aapl')
+```
+with code
+```
+apple<-create.data("aapl")[[2]]
+variables<-create.data("aapl")[[3]][-1]
+walmart<-create.data("wmt")[[2]]
+```
 
 ### Break down into end to end tests
 
-Explain what these tests test and why
+In the main comparison function,
 
 ```
-Give an example
+comparisonPlot <- function(x,AAA,BBB)
 ```
+  #AAA and BBB will be of form input$VAR, which will be a read in textInput() from ui
+  #AAA and BBB must be character strings. the input syntax must acheive this
 
 ### And coding style tests
 
