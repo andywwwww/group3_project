@@ -1,0 +1,64 @@
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/
+#
+library(DT)
+library(shiny)
+library(dplyr)
+library(rvest)
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+
+   # Application title
+   titlePanel("Group 3 Project"),
+
+   # Sidebar with a slider input for number of bins
+   sidebarLayout(
+      sidebarPanel(
+        h5('please only write the tickers of the companies'),
+         textInput('comp1', 'first company', value = "", width = NULL, placeholder = NULL),
+         textInput('comp2', 'second company', value = "", width = NULL, placeholder = NULL),
+         selectInput("property", "what would you like to compare:", hello2),
+         actionButton("Button", "compare!", icon = icon("line-chart"))
+
+      ),
+
+      # Show a plot of the generated distribution
+      mainPanel(
+         tabsetPanel(
+           tabPanel("Balance Sheet", dataTableOutput('table1')),
+         tabPanel("Balance Sheet 2",dataTableOutput('table2'))
+         )
+
+      )
+   )
+)
+
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+
+    aa <- eventReactive(input$Button, {
+      create.data(char = input$comp1)[[2]]
+    })
+
+  bb <- eventReactive(input$Button, {
+      create.data(char = input$comp2)[[2]]
+    })
+
+    output$table1 <- DT::renderDataTable({
+      datatable( aa(), rownames = TRUE )
+    })
+
+    output$table2 <- DT::renderDataTable({
+        datatable( bb(), rownames = TRUE )
+      })
+
+}
+
+# Run the application
+shinyApp(ui = ui, server = server)
+
