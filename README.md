@@ -108,4 +108,3 @@ This project is licensed under General License - see the [LICENSE.md](LICENSE.md
 * Inspiration
 from Justin Lee(https://github.com/munsheet)
 from Stéphane Guerrier(https://github.com/stephaneguerrier)
-* etc
