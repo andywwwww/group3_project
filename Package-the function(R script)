@@ -1,0 +1,107 @@
+#' @title comparison plot
+#'
+#' @description The package is used to grab online finance data to do basic comparsion.
+#' The data points are separated based on year and catergoized based
+#' on users' need. It could be cash flow, inventory, etc.
+#' @z<-as.character check if it's a character? I'm not really sure about the if statements
+#' below
+#' @data<-data.frame it sets the size of the matrices that the plot function is
+#' going in take in
+#' @plot_ly it takes in the data from two different companies and plot two lines based
+#' on attributes below
+#' @x=~years which year(between 2015-2017)
+#' @name=AAA AAA as walmart would be wmt
+#'
+#' @author Ryan Voyack
+#' @import dplyr
+#' @import plotly
+#' @import stringi
+#' @import rvest
+#' @export
+#' @examples
+#' type in comparisonPlot(2,'wmt','aapl') in console
+#' with code
+#' apple<-create.data("aapl")[[2]]
+#' variables<-create.data("aapl")[[3]][-1]
+#' walmart<-create.data("wmt")[[2]]
+#'
+#'
+#'
+comparisonPlot <- function(x,AAA,BBB){
+  #AAA and BBB will be of form input$VAR, which will be a read in textInput() from ui
+  #AAA and BBB must be character strings. the input syntax must acheive this
+  AA <- create.data(AAA)
+  A<-AA[[2]]
+  BB <- create.data(BBB)
+  B<-BB[[2]]
+
+  y<-BB[[3]][x+1]
+
+  z<-as.character(A[y,])
+  z1<-as.character(B[y,])
+  #see if all the numbers in each of the two rows are all scaled by the same values
+  #this would be if it was B or M (to denote million or billion)
+  options(digits=5)
+  yes<-as.character(c(substr(z,nchar(z),nchar(z))))
+  yesyes<-as.character(c(substr(z1,nchar(z1),nchar(z1))))
+
+  #here we are going to create the data that we will graph such that we will:
+  #not only will we cut down the data sets to the part the user specified
+  #we will get rid of the letters (M,B,%) at the end of each number
+  #and we will put the numbers in the same dimension as needed (all into millions or billions, etc)
+  if(length(unique(yes))==1 & length(unique(yesyes))==1){
+    key<-substr(substr(z,nchar(z),nchar(z)),1,1)[1] #hard coded for one column but this is fine
+    if(key=="%"){
+      legend<- sprintf("All values of '%s' are percentages < 100", y)
+      temp1 <- gsub("([MB)])","",A[y,])
+      temp1 <- as.numeric(gsub("([(])","-",temp1))
+      temp2 <- gsub("([MB)])","",B[y,])
+      temp2 <- as.numeric(gsub("([(])","-",temp2))
+    }else{
+      legend<- sprintf("All values of '%s' are in %sillions of US dollars", y, key)
+      temp1 <- gsub("([MB)])","",A[y,])
+      temp1 <- as.numeric(gsub("([(])","-",temp1))
+      temp2 <- gsub("([MB)])","",B[y,])
+      temp2 <- as.numeric(gsub("([(])","-",temp2))
+    }
+  }else{
+    legend<- sprintf("All values of '%s' are in Millions of US dollars", y)
+    i=1
+    for(i in c(1:nchar(z))){
+      if(substr(z,nchar(z),nchar(z))[[i]]=="B"){
+        z[i]<- gsub("([B])","",z[i])
+        z[i]<-as.numeric(z[i])*1000
+      }else if(substr(z,nchar(z),nchar(z))[[i]]=="K"){
+        z[i]<- gsub("([K])","",z[i])
+        z[i]<-as.numeric(z[i])/1000
+      }else{
+
+      }
+      if(substr(z1,nchar(z1),nchar(z1))[[i]]=="B"){
+        z1[i]<- gsub("([B])","",z1[i])
+        z1[i]<-as.numeric(z1[i])*1000
+      }else if(substr(z1,nchar(z1),nchar(z1))[[i]]=="K"){
+        z1[i]<- gsub("([K])","",z1[i])
+        z1[i]<-as.numeric(z1[i])/1000
+      }
+    }
+    temp1<-z
+    temp2<-z1
+  }
+
+  #now the function will graph the variable that the user prompted for
+
+  data<-data.frame(matrix(temp1,temp2, ncol = 2, nrow=5))
+  colnames(data)<-c(AAA,BBB)
+
+  years<-colnames(AA[[2]])
+  rownames(data)<-years
+  #plot!
+  plot_ly(data, x=~c(2013:2017),y=~y) %>%
+    add_trace(y=~temp1, x=~years, name=AAA, type='scatter', mode='lines') %>%
+    add_trace(y=~temp2, x=~years, name=BBB,  type='scatter', mode='lines') %>%
+    layout(title = legend,
+           scene = list(
+             yaxis = list(title = y)))
+
+}
