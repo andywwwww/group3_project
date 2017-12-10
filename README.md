@@ -43,7 +43,7 @@ install and build.
 
 For git files, copy all files with name "package-" into one directory and repeat the same command with zip.
 
-![If the package works, it should look like this.](http://personal.psu.edu/jxw505/OTHERS/test.PNG)
+![If the package works, it should look like this.](https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=0ahUKEwii46C85f_XAhVq7IMKHYJSDuQQjRwIBw&url=https%3A%2F%2Fpotatoparcel.com%2Fproducts%2Fpotato-parcel&psig=AOvVaw2Ys4AS0eJO5EnttpV4sZ84&ust=1513007277112474)
 
 ## Running the tests
 After having the package running, type the following in console
