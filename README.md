@@ -10,6 +10,8 @@ Our Project consists of a R package, a Shiny App that works with financial statm
 
 Pull data off from the website Marketwatch  using selectorGadget and the rvest package.
 clean up the data just so R could read it to the comparison function using package “dplyr” and "rvest"
+![A couple sample data points that the user could choose from.](http://personal.psu.edu/jxw505/OTHERS/data.png)
+(The link sometimes is iffy. Image is available at http://personal.psu.edu/jxw505/OTHERS/data.png)
 
 ### Prerequisites
 
@@ -30,7 +32,7 @@ install.packages(rvest)
 
 ### Installing
 
-Install the R package from git first. Avalible in both zip file and git file with name "package-."
+Install the R package from git first. Available in both zip file and git file with name "package-."
 For zip, unzip it locally and run command
 
 ```
@@ -43,7 +45,8 @@ install and build.
 
 For git files, copy all files with name "package-" into one directory and repeat the same command with zip.
 
-![If the package works, it should look like this.](https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=0ahUKEwii46C85f_XAhVq7IMKHYJSDuQQjRwIBw&url=https%3A%2F%2Fpotatoparcel.com%2Fproducts%2Fpotato-parcel&psig=AOvVaw2Ys4AS0eJO5EnttpV4sZ84&ust=1513007277112474)
+![If the package works, it should look like this.](http://personal.psu.edu/jxw505/OTHERS/test.PNG)
+(The link sometimes is iffy. Image is available at http://personal.psu.edu/jxw505/OTHERS/test.PNG)
 
 ## Running the tests
 After having the package running, type the following in console
@@ -79,11 +82,6 @@ Give an example
 
 Add additional notes about how to deploy this on a live system
 
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
 
 ## Contributing
 
@@ -95,16 +93,19 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Ryan Voyack** - *Initial work* - (https://github.com/ryanvoyack)
+* **Marshall Malino** - *Initial work* - (https://github.com/spearman666)
+* **Andrea Wan** - *Initial work* - (https://github.com/andywwwww)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/andywwwww/group3_project/graphs/contributors) who participated in this project.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under General License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
-* Hat tip to anyone who's code was used
 * Inspiration
+from Justin Lee(https://github.com/munsheet)
+from Stéphane Guerrier(https://github.com/stephaneguerrier)
 * etc
