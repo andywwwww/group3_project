@@ -43,7 +43,7 @@ install and build.
 
 For git files, copy all files with name "package-" into one directory and repeat the same command with zip.
 
-![If the package works, it should look like this.](http://personal.psu.edu/jxw505/OTHERS/)
+![If the package works, it should look like this.](http://personal.psu.edu/jxw505/OTHERS/test.PNG)
 
 ## Running the tests
 After having the package running, type the following in console
