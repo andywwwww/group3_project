@@ -259,35 +259,20 @@ library("rvest")
 create.data <- function(char){
   #import data
   a<-'https://www.marketwatch.com/investing/stock/'
-  
   b<-'/financials/balance-sheet'
-  
   html <- paste(a,char,b,sep='')
-  
   year17 <- html(html) %>%
-    
     html_nodes(xpath='//tr//*[(((count(preceding-sibling::*) + 1) = 6) and parent::*)]') %>%
-    
     html_text()
-  
   year16 <- html(html) %>%
-    
     html_nodes(xpath='//*[contains(concat( " ", @class, " " ), concat( " ", "valueCell", " " )) and (((count(preceding-sibling::*) + 1) = 5) and parent::*)] | //th[(((count(preceding-sibling::*) + 1) = 5) and parent::*)]') %>%
-    
     html_text()
-  
   year15 <- html(html) %>%
-    
     html_nodes(xpath='//*[contains(concat( " ", @class, " " ), concat( " ", "valueCell", " " )) and (((count(preceding-sibling::*) + 1) = 4) and parent::*)] | //th[(((count(preceding-sibling::*) + 1) = 4) and parent::*)]') %>%
-    
     html_text()
-  
   year14 <- html(html) %>%
-    
     html_nodes(xpath='//*[contains(concat( " ", @class, " " ), concat( " ", "valueCell", " " )) and (((count(preceding-sibling::*) + 1) = 3) and parent::*)] | //th[(((count(preceding-sibling::*) + 1) = 3) and parent::*)]') %>%
-    
     html_text()
-  
   year13 <- html(html) %>%
     
     html_nodes(xpath='//*[contains(concat( " ", @class, " " ), concat( " ", "valueCell", " " )) and (((count(preceding-sibling::*) + 1) = 2) and parent::*)] | //th[(((count(preceding-sibling::*) + 1) = 2) and parent::*)]') %>%
@@ -307,12 +292,9 @@ create.data <- function(char){
   visualizeData<-matrix(mylist, ncol = 5)
   rownames(visualizeData)<-variables[-1]
   colnames(visualizeData)<-fiscal.years
-  #create data frame
-  graphingData <- data.frame(visualizeData)
-  row.names(graphingData)<-make.names(variables[-1], unique = TRUE) #this fixes a pesky error
-
+ 
 #create return
-  returnList <- list(graphingData, visualizeData, variables)
+  returnList <- list(visualizeData, variables)
   return(returnList)
 }
 
