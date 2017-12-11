@@ -1,70 +1,105 @@
-#how to code in shiny:
-#https://github.com/rstudio/shiny-examples/blob/master/063-superzip-example/ui.R
-#https://shiny.rstudio.com/gallery/superzip-example.html
-
-
-##comparisons##########
-
-#first we get data and get it ready for graphing
-
-#hard code this for now:
-apple<-create.data("aapl")[[2]]
-variables<-create.data("aapl")[[3]][-1]
-walmart<-create.data("wmt")[[2]]
-
-#require create.data() function
-#require dplyr
-#require plotly
-library("dplyr")
-library("plotly")
-library("stringi")
-#x is the variable's row in the matrix, this is subject to change. 
-#this will havet to interact with the ui and an input as well. 
-#this is a decision to be made by the ui author
-#this function is not at all coded to fit in the server and must be fixed accordingly
-
+#require( create.data() )
+library(stringi)
+library(rvest)
+library(plotly)
+library(dplyr) 
 
 comparisonPlot <- function(x,AAA,BBB){  
-  #AAA and BBB will be of form input$VAR, which will be a read in textInput() from ui
-  #AAA and BBB must be character strings. the input syntax must acheive this
+  #    AAA and BBB will be of form input$VAR, which will be a read in textInput() from ui
+  #    AAA and BBB must be character strings. the input syntax must acheive this
   AA <- create.data(AAA)
-  A<-AA[[2]]
+  A<-AA[[1]]
   BB <- create.data(BBB)
-  B<-BB[[2]]
+  B<-BB[[1]]
   
-  y<-BB[[3]][x+1]
+  y<-BB[[2]][x+1]
   
   z<-as.character(A[y,])
   z1<-as.character(B[y,])
-  #see if all the numbers in each of the two rows are all scaled by the same values
-  #this would be if it was B or M (to denote million or billion)
+
+  ###  see if all the numbers in each of the two rows are all scaled by the same values
+  #    this will be used in the conditional below 
+  #    this would be if values ended in B or M (to denote millions or billions of dollars) for example
   options(digits=5)
   yes<-as.character(c(substr(z,nchar(z),nchar(z))))
   yesyes<-as.character(c(substr(z1,nchar(z1),nchar(z1))))
   
-  #here we are going to create the data that we will graph such that we will: 
-  #not only will we cut down the data sets to the part the user specified
-  #we will get rid of the letters (M,B,%) at the end of each number
-  #and we will put the numbers in the same dimension as needed (all into millions or billions, etc) 
+  if(unique(yes)=='-' & unique(yesyes)=='-'){
+        stop('Neither of the companies prompted have information for this variable on their Balance Sheets')
+  }
+    
+  ###  here we are going to create the data that we will graph such that we will: 
+  #    not only will we cut down the data sets to the part the user specified
+  #    we will get rid of the characters (M,B,%) at the end of each entry
+  #    and we will put the numbers in the same dimension as needed (all into millions or billions, etc) 
   if(length(unique(yes))==1 & length(unique(yesyes))==1){
-    key<-substr(substr(z,nchar(z),nchar(z)),1,1)[1] #hard coded for one column but this is fine
+  ###  if each variable set are all in the same denomination (such as millions) within and between each data set
+    key<-substr(substr(z,nchar(z),nchar(z)),1,1)[1]  
+  #    this line is hard coded for one year entery only but this is logical
+  #    if a row contains any % then each of the rows (variables) in both sets MUST be all %
     if(key=="%"){
+  ###  if everything is a percentage
+  ###  make everything (if all percentages) a numeric input type     
       legend<- sprintf("All values of '%s' are percentages < 100", y)
       temp1 <- gsub("([MB)])","",A[y,])
       temp1 <- as.numeric(gsub("([(])","-",temp1))
       temp2 <- gsub("([MB)])","",B[y,])
       temp2 <- as.numeric(gsub("([(])","-",temp2))
     }else{
+  ###  if everything is the same scaled value (such as billions)
       legend<- sprintf("All values of '%s' are in %sillions of US dollars", y, key)
       temp1 <- gsub("([MB)])","",A[y,])
       temp1 <- as.numeric(gsub("([(])","-",temp1))
       temp2 <- gsub("([MB)])","",B[y,])
       temp2 <- as.numeric(gsub("([(])","-",temp2))
     }
-  }else{
+  }else if(!(isTRUE(as.character(unique(yes)) != '-'))|(!isTRUE(as.character(unique(yesyes)) != '-' ))){
+  ###  if either data set contains a portion of entries that have no value (entered as "-")
+    
+  #    ultimately, if either of these data sets' vectors have a a year some blank cells, we do the following:
+  #    an example of this would be a company whose IPO was after 2013, such as Snapchat
+  #    we convert all existing entries to millions because this is convinient and reasonable 
     legend<- sprintf("All values of '%s' are in Millions of US dollars", y)
     i=1
-    for(i in c(1:nchar(z))){
+    for(i in c(1:length(nchar(z)))){
+  #    this range argument is hard coded for both z and z1, this is obviously reasonable 
+      if(substr(z,nchar(z),nchar(z))[[i]]=="B"){
+        z[i]<- gsub("([B])","",z[i])
+        z[i]<-as.numeric(z[i])*1000
+      }else if(substr(z,nchar(z),nchar(z))[[i]]=="K"){
+        z[i]<- gsub("([K])","",z[i])
+        z[i]<-as.numeric(z[i])/1000
+      }else if(substr(z,nchar(z),nchar(z))[[i]]=="-"){
+        z[i]<- gsub("([-])","0",z[i])
+        z[i]<-as.numeric(z[i])
+      }else if(substr(z,nchar(z),nchar(z))[[i]]=="M"){
+        z[i]<- gsub("([M])","",z[i])
+        z[i]<-as.numeric(z[i])
+      }else{
+        #
+      }
+      if(substr(z1,nchar(z1),nchar(z1))[[i]]=="B"){
+        z1[i]<- gsub("([B])","",z1[i])
+        z1[i]<-as.numeric(z1[i])*1000
+      }else if(substr(z1,nchar(z1),nchar(z1))[[i]]=="K"){
+        z1[i]<- gsub("([K])","",z1[i])
+        z1[i]<-as.numeric(z1[i])/1000
+      }else if(substr(z1,nchar(z1),nchar(z1))[[i]]=="M"){
+        z1[i]<- gsub("([M])","",z1[i])
+        z1[i]<-as.numeric(z1[i])
+      }else if(substr(z1,nchar(z1),nchar(z1))[[i]]=="-"){
+        z1[i]<- gsub("([-])","0",z1[i])
+        z1[i]<-as.numeric(z1[i])
+      }
+    }
+    temp1<-z
+    temp2<-z1
+  }else{
+  #    else, the entries as a collective must vary by some multiple of thousands of dollars
+  #    it is reasonable to then put everything as millions. this is what we do:
+    legend<- sprintf("All values of '%s' are in Millions of US dollars", y)
+    i=1
+    for(i in c(1:length(nchar(z)))){
       if(substr(z,nchar(z),nchar(z))[[i]]=="B"){
         z[i]<- gsub("([B])","",z[i])
         z[i]<-as.numeric(z[i])*1000
@@ -72,7 +107,7 @@ comparisonPlot <- function(x,AAA,BBB){
         z[i]<- gsub("([K])","",z[i])
         z[i]<-as.numeric(z[i])/1000
       }else{
-
+        #
       }
       if(substr(z1,nchar(z1),nchar(z1))[[i]]=="B"){
         z1[i]<- gsub("([B])","",z1[i])
@@ -85,13 +120,14 @@ comparisonPlot <- function(x,AAA,BBB){
     temp1<-z
     temp2<-z1
   }
-  
+  temp1<-as.numeric(temp1)
+  temp2<-as.numeric(temp2)
   #now the function will graph the variable that the user prompted for
   
   data<-data.frame(matrix(temp1,temp2, ncol = 2, nrow=5))
   colnames(data)<-c(AAA,BBB)
   
-  years<-colnames(AA[[2]])
+  years<-c("2013", "2014", "2015", "2016", "2017")
   rownames(data)<-years
   #plot!
   plot_ly(data, x=~c(2013:2017),y=~y) %>%
@@ -99,6 +135,5 @@ comparisonPlot <- function(x,AAA,BBB){
     add_trace(y=~temp2, x=~years, name=BBB,  type='scatter', mode='lines') %>%
     layout(title = legend,
            scene = list(
-              yaxis = list(title = y)))
+             yaxis = list(title = y)))
 }
-
