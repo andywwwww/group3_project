@@ -53,7 +53,7 @@ server <- function(input, output) {
 
 
   comparison <- eventReactive(input$Button, {
-    comparisonPlot(x = input$property, AAA = input$comp1, BBB = input$comp2)
+    comparisonPlot(x = (grep(input$property, rownames(aa))-1), AAA = input$comp1, BBB = input$comp2)
   })
 
     output$table1 <- DT::renderDataTable({
@@ -64,11 +64,10 @@ server <- function(input, output) {
         datatable( bb(), rownames = TRUE )
       })
 
-#    output$graph <- renderPlot(comparison)
+   output$graph <- renderPlot(comparison)
 
 }
 
 # Run the application
 shinyApp(ui = ui, server = server)
-
 
